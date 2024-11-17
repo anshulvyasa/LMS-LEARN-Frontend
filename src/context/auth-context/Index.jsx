@@ -43,7 +43,7 @@ export default function AuthProvider({ children }) {
     }
   }
 
-  async function checkAuthUser(params) {
+  async function checkAuthUser() {
     const data = await checkAuthService();
 
     if (data.success) {
@@ -74,6 +74,7 @@ export default function AuthProvider({ children }) {
         setSignUpFormData,
         handleRegisterUser,
         handleLoginUser,
+        auth
       }}
     >
       {children}
