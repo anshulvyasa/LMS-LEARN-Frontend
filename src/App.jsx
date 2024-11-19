@@ -17,7 +17,7 @@ function App() {
         path="/auth"
         element={
           <RouteGaurd
-            authenticated={auth?.authenticated}
+            authenticated={auth?.authenticate}
             user={auth?.user}
             element={<Auth />}
           />
@@ -27,7 +27,7 @@ function App() {
         path="/instructor"
         element={
           <RouteGaurd
-          authenticated={auth?.authenticated}
+          authenticated={auth?.authenticate}
           user={auth?.user}
           element={<InstructorDashBoardPage />}
           />
@@ -37,7 +37,7 @@ function App() {
         path="/"
         element={
           <RouteGaurd
-            authenticated={auth?.authenticated}
+            authenticated={auth?.authenticate}
             user={auth?.user}
             element={<StudentViewCommonLayout />}
           />

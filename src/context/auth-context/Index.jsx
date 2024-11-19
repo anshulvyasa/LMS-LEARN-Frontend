@@ -48,12 +48,12 @@ export default function AuthProvider({ children }) {
 
     if (data.success) {
       setAuth({
-        authenticated: true,
+        authenticate: true,
         user: data.data.user,
       });
     } else {
       setAuth({
-        authenticated: false,
+        authenticate: false,
         user: null,
       });
     }
