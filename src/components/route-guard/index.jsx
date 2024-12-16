@@ -5,8 +5,6 @@ function RouteGaurd({ authenticated, user, element }) {
   const location = useLocation();
 
  console.log(authenticated,user,"username")
-console.log(element);
-
  
   if (!authenticated && !location.pathname.includes("/auth")) {
     return <Navigate to="/auth" />;
