@@ -77,6 +77,13 @@ export default function AuthProvider({ children }) {
     setLoading(false)
   }
 
+  function resetCredential(){
+    setAuth({
+      authenticate:false,
+      user:null
+    })
+  }
+
 
   //this checkAurhUser() will run once our application is mounted
   useEffect(() => {
@@ -92,7 +99,8 @@ export default function AuthProvider({ children }) {
         setSignUpFormData,
         handleRegisterUser,
         handleLoginUser,
-        auth
+        auth,
+        resetCredential
       }}
     >
       {
