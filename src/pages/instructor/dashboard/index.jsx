@@ -8,7 +8,7 @@ import { useContext, useState } from "react";
 
 function InstructorDashBoardPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const {resetCredential}=useContext(AuthContext);
+  const { resetCredential } = useContext(AuthContext);
 
   const menuOption = [
     {
@@ -32,8 +32,8 @@ function InstructorDashBoardPage() {
   ];
 
   function handleLogout() {
-   sessionStorage.clear();
-   resetCredential();
+    sessionStorage.clear();
+    resetCredential();
   }
 
   return (
@@ -46,7 +46,7 @@ function InstructorDashBoardPage() {
               <Button
                 className="w-full justify-start mb-2"
                 key={menuItem.value}
-                variant={activeTab==menuItem.value?'secondary':'ghost'}
+                variant={activeTab == menuItem.value ? "secondary" : "ghost"}
                 onClick={
                   menuItem.value === "logout"
                     ? handleLogout
@@ -64,11 +64,11 @@ function InstructorDashBoardPage() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold mb-8 ">Dashboard</h1>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            {menuOption.map((menuItem) => 
+            {menuOption.map((menuItem) => (
               <TabsContent value={menuItem.value}>
                 {menuItem.component != null ? menuItem.component : null}
               </TabsContent>
-            )}
+            ))}
           </Tabs>
         </div>
       </main>
