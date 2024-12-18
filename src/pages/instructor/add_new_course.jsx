@@ -1,9 +1,10 @@
-import CourseSettings from "@/components/instructor-view/courses/add-new-course/course-landing-page";
-import CourseLanding from "@/components/instructor-view/courses/add-new-course/course-setting";
+
+import CourseLanding from "@/components/instructor-view/courses/add-new-course/course-landing-page";
+import CourseSettings from "@/components/instructor-view/courses/add-new-course/course-setting";
 import CourseCurriculum from "@/components/instructor-view/courses/add-new-course/curriculum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
 function AddNewCourse(params) {
     return <div className="container mx-auto p-4">

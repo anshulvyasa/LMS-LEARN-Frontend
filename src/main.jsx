@@ -3,6 +3,7 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import AuthProvider from './context/auth-context/Index'
+import InstructorProvider from './context/instructor-context'
 
 createRoot(document.getElementById('root')).render(
 
@@ -10,7 +11,9 @@ createRoot(document.getElementById('root')).render(
   <BrowserRouter>
   {/* Wrapping entire Document in AuthProvider Context API that i wrote customly in context Section  */}
   <AuthProvider>
-   <App />
+    <InstructorProvider>
+    <App />
+    </InstructorProvider>
   </AuthProvider>
   </BrowserRouter> 
 

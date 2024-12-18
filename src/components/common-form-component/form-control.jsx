@@ -1,28 +1,25 @@
-//First of All this is FormControl  file and this may be little bit complicated 
+//First of All this is FormControl  file and this may be little bit complicated
 //Suggestion => start reading from return statement of FormControl methord in which we are iterating on formControl aray using map
 //here we also have helper function in which we are indivisually returning the elemnent (element can be input,textArea,selectItem)
- 
 
+import { Input } from "../ui/input";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
-import { Input } from "../ui/input";
-import { Select } from "../ui/select";
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 function FormControls({ formControl = [], formData, setFormData }) {
-
-  
   //this is a Helper function for deploying items
   function RenderComponentByType(getControlItem) {
     let element = null;
-    const currentControlItemValue=formData[getControlItem.name]||'';
-
+    const currentControlItemValue = formData[getControlItem.name] || "";
+     
     switch (getControlItem.componentType) {
-      case 'input':
+      case "input":
         element = (
           <Input
             id={getControlItem.name}
@@ -30,21 +27,25 @@ function FormControls({ formControl = [], formData, setFormData }) {
             placeholder={getControlItem.Placeholder}
             type={getControlItem.type}
             value={currentControlItemValue}
-            onChange={(event)=>setFormData({
-              ...formData,
-              [getControlItem.name]:event.target.value
-            })}
+            onChange={(event) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: event.target.value,
+              })
+            }
           />
         );
         break;
       case "select":
         element = (
           <Select
-          onValueChange={(value)=>setFormData({
-            ...formData,
-            [getControlItem.name]:value
-          })}
-          value={currentControlItemValue}
+            onValueChange={(value) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: value,
+              })
+            }
+            value={currentControlItemValue}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={getControlItem.label} />
@@ -68,10 +69,12 @@ function FormControls({ formControl = [], formData, setFormData }) {
             name={getControlItem.name}
             placeholder={getControlItem.placeholder}
             value={currentControlItemValue}
-            onChange={(event)=>setFormData({
-              ...formData,
-              [getControlItem.name]:event.target.value
-            })}
+            onChange={(event) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: event.target.value,
+              })
+            }
           />
         );
         break;
@@ -81,14 +84,15 @@ function FormControls({ formControl = [], formData, setFormData }) {
           name={getControlItem.name}
           placeholder={getControlItem.placeholder}
           value={currentControlItemValue}
-            onChange={(event)=>setFormData({
+          onChange={(event) =>
+            setFormData({
               ...formData,
-              [getControlItem.name]:event.target.value
-            })}
+              [getControlItem.name]: event.target.value,
+            })
+          }
         />;
         break;
     }
-
 
     return element;
   }
