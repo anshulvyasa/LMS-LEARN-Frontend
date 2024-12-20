@@ -175,3 +175,12 @@ export const languageOptions = [
     welcomeMessage: "",
     image: "",
   };
+
+  export const courseCurriculumInitialFormData=[
+    {
+      title:'',
+      vedioUrl:'',
+      freePreview:false,
+      public_id:''
+    }
+  ]
