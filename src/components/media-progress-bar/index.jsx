@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { motion, time } from "framer-motion";
+import { motion } from "framer-motion";
+
 
 function MediaProgressBar({ isMediaUploading, progress }) {
   const [showProgress, setShowProgress] = useState(false);
   const [animatedProgress, setAnimatedProgress] = useState(0);
-
-  
 
   useEffect(() => {
     if (isMediaUploading) {
@@ -34,14 +33,14 @@ function MediaProgressBar({ isMediaUploading, progress }) {
       >
         {progress >= 100 && isMediaUploading && (
           <motion.div
-            className="absolute top-0 left-0 right-0 bottom-0 bg-red-700 opacity-50 "
+            className="absolute top-0 left-0 right-0 bottom-0 bg-gray-50 opacity-50 "
             animate={{
               x: ["0%", "100%", "0%"],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear",
+              transition:{
+                duration: 2,
+                repeat: Infinity,
+                ease: "linear",
+              }
             }}
           />
         )}
