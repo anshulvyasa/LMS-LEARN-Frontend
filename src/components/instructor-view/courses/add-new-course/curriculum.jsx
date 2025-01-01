@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import VedioPlayer from "@/components/vedio-player";
 import { courseCurriculumInitialFormData } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
 import { mediaUploadService } from "@/services";
@@ -82,12 +83,23 @@ function CourseCurriculum() {
     }
   }
 
+  function isCourseCurriculumFormDataValid() {
+    return courseCurriculumFormData.every((item) => {
+      return (
+        item &&
+        typeof item === "object" &&
+        item.title.trim() !== "" &&
+        item.vedioUrl.trim() !== ""
+      );
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Course Curriculum</CardTitle>
         <CardContent>
-          <Button onClick={handleNewLecture}>Add Lectures</Button>
+          <Button disabled={!isCourseCurriculumFormDataValid()||mediaUploadProgress} onClick={handleNewLecture}>Add Lectures</Button>
           {mediaUploadProgress && (
             <MediaProgressBar
               isMediaUploading={mediaUploadProgress}
@@ -120,14 +132,26 @@ function CourseCurriculum() {
                   </div>
                 </div>
                 <div className="mt-6">
-                  <Input
-                    type="file"
-                    accept="video/*"
-                    onChange={(event) =>
-                      handleSingleLectureUpload(event, index)
-                    }
-                    className="mb-4"
-                  />
+                  {courseCurriculumFormData[index]?.vedioUrl ? (
+                    <div className="flex gap-3">
+                      <VedioPlayer
+                        url={courseCurriculumFormData[index]?.vedioUrl}
+                        width="450px"
+                        height="300px"
+                      />
+                      <Button>Replace Vedio</Button>
+                      <Button className="bg-red-900">Delete Lecture</Button>
+                    </div>
+                  ) : (
+                    <Input
+                      type="file"
+                      accept="video/*"
+                      onChange={(event) =>
+                        handleSingleLectureUpload(event, index)
+                      }
+                      className="mb-4"
+                    />
+                  )}
                 </div>
               </div>
             ))}
