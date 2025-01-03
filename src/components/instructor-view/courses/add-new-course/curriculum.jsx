@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import VedioPlayer from "@/components/vedio-player";
 import { courseCurriculumInitialFormData } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
-import { mediaUploadService } from "@/services";
+import { mediaDeleteService, mediaUploadService } from "@/services";
 import { useContext } from "react";
 
 function CourseCurriculum() {
@@ -94,12 +94,39 @@ function CourseCurriculum() {
     });
   }
 
+  async function handleReplaceVedio(currentIndex) {
+    let cpyCourseCurriculumFormData = [...courseCurriculumFormData];
+    const getCurrentVedioPublicId =
+      cpyCourseCurriculumFormData[currentIndex].public_id;
+
+    const deleteCurrentMediaResponse = await mediaDeleteService(
+      getCurrentVedioPublicId
+    );
+    console.log(deleteCurrentMediaResponse);
+
+    if (deleteCurrentMediaResponse?.success) {
+      cpyCourseCurriculumFormData[currentIndex] = {
+        ...cpyCourseCurriculumFormData[currentIndex],
+        vedioUrl: "",
+        public_id: "",
+      };
+
+
+      setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Course Curriculum</CardTitle>
         <CardContent>
-          <Button disabled={!isCourseCurriculumFormDataValid()||mediaUploadProgress} onClick={handleNewLecture}>Add Lectures</Button>
+          <Button
+            disabled={!isCourseCurriculumFormDataValid() || mediaUploadProgress}
+            onClick={handleNewLecture}
+          >
+            Add Lectures
+          </Button>
           {mediaUploadProgress && (
             <MediaProgressBar
               isMediaUploading={mediaUploadProgress}
@@ -139,7 +166,9 @@ function CourseCurriculum() {
                         width="450px"
                         height="300px"
                       />
-                      <Button>Replace Vedio</Button>
+                      <Button onClick={() => handleReplaceVedio(index)}>
+                        Replace Vedio
+                      </Button>
                       <Button className="bg-red-900">Delete Lecture</Button>
                     </div>
                   ) : (
