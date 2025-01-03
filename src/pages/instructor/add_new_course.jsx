@@ -11,10 +11,23 @@ import {
 } from "../../components/ui/tabs";
 import { useContext } from "react";
 import { InstructorContext } from "@/context/instructor-context";
+import { AuthContext } from "@/context/auth-context/Index";
+import { addNewCourseService } from "@/services";
+import {
+  courseCurriculumInitialFormData,
+  courseLandingInitialFormData,
+} from "@/config";
+import { useNavigate } from "react-router-dom";
 
 function AddNewCourse(params) {
-  const { courseLandingFormData, courseCurriculumFormData } =
-    useContext(InstructorContext);
+  const {
+    courseLandingFormData,
+    courseCurriculumFormData,
+    setCourseLandingFormData,
+    setCourseCurriculumFormData,
+  } = useContext(InstructorContext);
+  const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   //Helper function for validateFormData function
   function isEmpty(value) {
@@ -28,7 +41,7 @@ function AddNewCourse(params) {
   function validateFormData() {
     for (const key in courseLandingFormData) {
       if (isEmpty(courseLandingFormData[key])) {
-          console.log(`inside courseLandingData  key is ${key} `);      
+        return false;
       }
     }
 
@@ -43,14 +56,33 @@ function AddNewCourse(params) {
         return false;
       }
 
-      if (item.freePreview) {  
-         hasFreePreview = true; //found at least one free preview
+      if (item.freePreview) {
+        hasFreePreview = true; //found at least one free preview
       }
     }
 
     return hasFreePreview;
   }
 
+  async function handleCreateCourse() {
+    const finalFormData = {
+      instructorId: auth?.user?._id,
+      instructorName: auth?.user?.userName,
+      date: new Date(),
+      ...courseLandingFormData,
+      Student: [],
+      curriculum: courseCurriculumFormData,
+      isPublished: true,
+    };
+
+    const response = await addNewCourseService(finalFormData);
+
+    if (response?.success) {
+      setCourseCurriculumFormData(courseCurriculumInitialFormData);
+      setCourseLandingFormData(courseLandingInitialFormData);
+      navigate(-1);
+    }
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -58,7 +90,7 @@ function AddNewCourse(params) {
         <h1 className="text-3xl font-extrabold mb-5">Create a new course</h1>
         <Button
           disabled={!validateFormData()}
-          // onClick={dummy}
+          onClick={handleCreateCourse}
           className="text-sm tracking-wider font-bold px-8 uppercase"
         >
           Submit

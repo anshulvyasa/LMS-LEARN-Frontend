@@ -11,7 +11,7 @@ import {
 import { Delete, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function InstructorCourses() {
+function InstructorCourses({ listOfCourses }) {
   const navigate = useNavigate();
 
   return (
@@ -39,19 +39,23 @@ function InstructorCourses() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>React Js full Course 2025</TableCell>
-                <TableCell>100</TableCell>
-                <TableCell>$5000</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" className="mr-2">
-                    <Edit className="h-6 w-6" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="mr-2">
-                    <Delete className="h-6 w-6" />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {listOfCourses && listOfCourses.length > 0
+                ? listOfCourses.map((courses) => (
+                    <TableRow>
+                      <TableCell>{courses?.title}</TableCell>
+                      <TableCell>{courses?.Student.length}</TableCell>
+                      <TableCell>${courses?.pricing}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="sm" className="mr-2">
+                          <Edit className="h-6 w-6" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="mr-2">
+                          <Delete className="h-6 w-6" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : null}
             </TableBody>
           </Table>
         </div>
