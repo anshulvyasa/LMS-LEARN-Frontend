@@ -8,11 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  courseCurriculumInitialFormData,
+  courseLandingInitialFormData,
+} from "@/config";
+import { InstructorContext } from "@/context/instructor-context";
 import { Delete, Edit } from "lucide-react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 function InstructorCourses({ listOfCourses }) {
   const navigate = useNavigate();
+  const { setCourseCurriculumFormData, setCourseLandingFormData,setCurrentEditedCourseId } =
+    useContext(InstructorContext);
 
   return (
     <Card>
@@ -20,6 +28,9 @@ function InstructorCourses({ listOfCourses }) {
         <CardTitle className="text-3xl font-extrabold ">All Courses</CardTitle>
         <Button
           onClick={() => {
+            setCurrentEditedCourseId(null)
+            setCourseCurriculumFormData(courseCurriculumInitialFormData);
+            setCourseLandingFormData(courseLandingInitialFormData);
             navigate("/instructor/create-new-course");
           }}
           className="p-6"
@@ -40,13 +51,20 @@ function InstructorCourses({ listOfCourses }) {
             </TableHeader>
             <TableBody>
               {listOfCourses && listOfCourses.length > 0
-                ? listOfCourses.map((courses) => (
+                ? listOfCourses.map((course) => (
                     <TableRow>
-                      <TableCell>{courses?.title}</TableCell>
-                      <TableCell>{courses?.Student.length}</TableCell>
-                      <TableCell>${courses?.pricing}</TableCell>
+                      <TableCell>{course?.title}</TableCell>
+                      <TableCell>{course?.Student.length}</TableCell>
+                      <TableCell>${course?.pricing}</TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm" className="mr-2">
+                        <Button
+                          onClick={() => {
+                            navigate(`/instructor/edit-course/${course?._id}`);
+                          }}
+                          variant="ghost"
+                          size="sm"
+                          className="mr-2"
+                        >
                           <Edit className="h-6 w-6" />
                         </Button>
                         <Button variant="ghost" size="sm" className="mr-2">

@@ -11,6 +11,7 @@ import { mediaDeleteService, mediaUploadService } from "@/services";
 import { useContext } from "react";
 
 function CourseCurriculum() {
+
   const {
     courseCurriculumFormData,
     setCourseCurriculumFormData,
@@ -19,6 +20,8 @@ function CourseCurriculum() {
     mediaUploadProgressPercentage,
     setMediaUploadProgressPercentage,
   } = useContext(InstructorContext);
+
+  
 
   function handleNewLecture() {
     setCourseCurriculumFormData([
@@ -84,7 +87,9 @@ function CourseCurriculum() {
   }
 
   function isCourseCurriculumFormDataValid() {
-    return courseCurriculumFormData.every((item) => {
+    
+    return courseCurriculumFormData.every((item) => {     
+       
       return (
         item &&
         typeof item === "object" &&

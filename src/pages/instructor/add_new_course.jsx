@@ -9,25 +9,61 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { InstructorContext } from "@/context/instructor-context";
 import { AuthContext } from "@/context/auth-context/Index";
-import { addNewCourseService } from "@/services";
+import {
+  addNewCourseService,
+  fetchInstructorCourseDetailService,
+  updateCourseByIdService,
+} from "@/services";
 import {
   courseCurriculumInitialFormData,
   courseLandingInitialFormData,
 } from "@/config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function AddNewCourse(params) {
+function AddNewCourse() {
   const {
     courseLandingFormData,
     courseCurriculumFormData,
     setCourseLandingFormData,
     setCourseCurriculumFormData,
+    currentEditedCourseId,
+    setCurrentEditedCourseId,
   } = useContext(InstructorContext);
+
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const params = useParams();
+
+  async function fetchCurrentCourseDetail(p) {
+    const response = await fetchInstructorCourseDetailService(
+      currentEditedCourseId
+    );
+
+   
+
+    if (response?.success) {
+      const setCourseFormData = Object.keys(
+        courseLandingInitialFormData
+      ).reduce((acc, key) => {
+        acc[key] = response?.data[key] || courseLandingInitialFormData[key];
+        return acc;
+      }, {});
+
+      setCourseLandingFormData(setCourseFormData);
+      setCourseCurriculumFormData(response?.data?.curriculum);
+    }
+  }
+
+  useEffect(() => {
+    if (currentEditedCourseId !== null) fetchCurrentCourseDetail();
+  }, [currentEditedCourseId]);
+
+  useEffect(() => {
+    if (params?.courseId) setCurrentEditedCourseId(params?.courseId);
+  }, [params?.courseId]);
 
   //Helper function for validateFormData function
   function isEmpty(value) {
@@ -75,11 +111,14 @@ function AddNewCourse(params) {
       isPublished: true,
     };
 
-    const response = await addNewCourseService(finalFormData);
+    
+
+    const response =currentEditedCourseId!=null?await updateCourseByIdService(currentEditedCourseId,finalFormData): await addNewCourseService(finalFormData);
 
     if (response?.success) {
       setCourseCurriculumFormData(courseCurriculumInitialFormData);
       setCourseLandingFormData(courseLandingInitialFormData);
+      setCurrentEditedCourseId(null);
       navigate(-1);
     }
   }
