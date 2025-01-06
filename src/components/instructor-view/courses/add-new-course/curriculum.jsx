@@ -7,11 +7,15 @@ import { Switch } from "@/components/ui/switch";
 import VedioPlayer from "@/components/vedio-player";
 import { courseCurriculumInitialFormData } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
-import { mediaDeleteService, mediaUploadService } from "@/services";
-import { useContext } from "react";
+import {
+  mediaBulkUploadService,
+  mediaDeleteService,
+  mediaUploadService,
+} from "@/services";
+import { Upload } from "lucide-react";
+import { useContext, useRef } from "react";
 
 function CourseCurriculum() {
-
   const {
     courseCurriculumFormData,
     setCourseCurriculumFormData,
@@ -20,8 +24,7 @@ function CourseCurriculum() {
     mediaUploadProgressPercentage,
     setMediaUploadProgressPercentage,
   } = useContext(InstructorContext);
-
-  
+  const bulkUploadInputRef = useRef(null);
 
   function handleNewLecture() {
     setCourseCurriculumFormData([
@@ -87,9 +90,7 @@ function CourseCurriculum() {
   }
 
   function isCourseCurriculumFormDataValid() {
-    
-    return courseCurriculumFormData.every((item) => {     
-       
+    return courseCurriculumFormData.every((item) => {
       return (
         item &&
         typeof item === "object" &&
@@ -116,82 +117,158 @@ function CourseCurriculum() {
         public_id: "",
       };
 
-
       setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+    }
+  }
+
+  function handleUploadBulkUploadDialog() {
+    bulkUploadInputRef?.current?.click();
+  }
+
+  function areAllCourseCurriculumFormDataObjectsEmpty(arr) {
+    return arr.every((obj) => {
+      return Object.entries(obj).every(([key, value]) => {
+        if (typeof value === "boolean") {
+          return true;
+        }
+        return value === "";
+      });
+    });
+  }
+
+  async function handleMediaBulkUpload(event) {
+    const selectedFile = Array.from(event.target.files);
+    const bulkFormData = new FormData();
+
+    selectedFile.forEach((fileItem) => bulkFormData.append("files", fileItem));
+
+    try {
+      setMediaUploadProgress(true);
+      const response = await mediaBulkUploadService(
+        bulkFormData,
+        setMediaUploadProgressPercentage
+      );
+      console.log(response);
+
+      if (response?.success) {
+        let cpyCourseCurriculumFormData =
+          areAllCourseCurriculumFormDataObjectsEmpty(response?.data)
+            ? []
+            : [...courseCurriculumFormData];
+
+        cpyCourseCurriculumFormData = [
+          ...cpyCourseCurriculumFormData,
+          ...response?.data.map((item, index) => ({
+            vedioUrl: item?.url,
+            public_id: item?.public_id,
+            freePreview: false,
+            title: `Lecture ${index + 1 + cpyCourseCurriculumFormData.length}`,
+          })),
+        ];
+
+        setCourseCurriculumFormData(cpyCourseCurriculumFormData);
+        setMediaUploadProgress(false);
+      }
+
+      setMediaUploadProgress(false);
+    } catch (error) {
+      console.log(error);
+      setMediaUploadProgress(false);
     }
   }
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row justify-between ">
         <CardTitle>Course Curriculum</CardTitle>
-        <CardContent>
+        <div>
+          <Input
+            type="file"
+            ref={bulkUploadInputRef}
+            accept="vedio/*"
+            multiple
+            className="hidden"
+            id="bulk-media-upload"
+            onChange={handleMediaBulkUpload}
+          />
           <Button
-            disabled={!isCourseCurriculumFormDataValid() || mediaUploadProgress}
-            onClick={handleNewLecture}
+            as="label"
+            htmlFor="bulk-media-upload"
+            variant="outline"
+            className="cursor-pointer"
+            onClick={handleUploadBulkUploadDialog}
           >
-            Add Lectures
+            <Upload className="w-4 h-5 mr-2" />
+            Bulk Upload
           </Button>
-          {mediaUploadProgress && (
-            <MediaProgressBar
-              isMediaUploading={mediaUploadProgress}
-              progress={mediaUploadProgressPercentage}
-            />
-          )}
-          <div className="mt-4 space-y-4">
-            {courseCurriculumFormData.map((curriculumItem, index) => (
-              <div className="border p-5 rounded-md">
-                <div className="flex gap-5 items-center">
-                  <h3 className="font-semibold">Lecture {index + 1}</h3>
-                  <Input
-                    name={`title-${index + 1}`}
-                    placeholder="Enter lecture title"
-                    className="max-w-96"
-                    onChange={(event) => handleCourseTitleChange(event, index)}
-                    value={courseCurriculumFormData[index]?.title}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Button
+          disabled={!isCourseCurriculumFormDataValid() || mediaUploadProgress}
+          onClick={handleNewLecture}
+        >
+          Add Lectures
+        </Button>
+        {mediaUploadProgress && (
+          <MediaProgressBar
+            isMediaUploading={mediaUploadProgress}
+            progress={mediaUploadProgressPercentage}
+          />
+        )}
+        <div className="mt-4 space-y-4">
+          {courseCurriculumFormData.map((curriculumItem, index) => (
+            <div className="border p-5 rounded-md">
+              <div className="flex gap-5 items-center">
+                <h3 className="font-semibold">Lecture {index + 1}</h3>
+                <Input
+                  name={`title-${index + 1}`}
+                  placeholder="Enter lecture title"
+                  className="max-w-96"
+                  onChange={(event) => handleCourseTitleChange(event, index)}
+                  value={courseCurriculumFormData[index]?.title}
+                />
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    onCheckedChange={(value) =>
+                      handleFreePreviewChange(value, index)
+                    }
+                    checked={courseCurriculumFormData[index]?.freePreview}
+                    id={`freePreview-${index + 1}`}
                   />
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      onCheckedChange={(value) =>
-                        handleFreePreviewChange(value, index)
-                      }
-                      checked={courseCurriculumFormData[index]?.freePreview}
-                      id={`freePreview-${index + 1}`}
-                    />
-                    <Label htmlFor={`freePreview-${index + 1}`}>
-                      Free Preview
-                    </Label>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  {courseCurriculumFormData[index]?.vedioUrl ? (
-                    <div className="flex gap-3">
-                      <VedioPlayer
-                        url={courseCurriculumFormData[index]?.vedioUrl}
-                        width="450px"
-                        height="300px"
-                      />
-                      <Button onClick={() => handleReplaceVedio(index)}>
-                        Replace Vedio
-                      </Button>
-                      <Button className="bg-red-900">Delete Lecture</Button>
-                    </div>
-                  ) : (
-                    <Input
-                      type="file"
-                      accept="video/*"
-                      onChange={(event) =>
-                        handleSingleLectureUpload(event, index)
-                      }
-                      className="mb-4"
-                    />
-                  )}
+                  <Label htmlFor={`freePreview-${index + 1}`}>
+                    Free Preview
+                  </Label>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </CardHeader>
+              <div className="mt-6">
+                {courseCurriculumFormData[index]?.vedioUrl ? (
+                  <div className="flex gap-3">
+                    <VedioPlayer
+                      url={courseCurriculumFormData[index]?.vedioUrl}
+                      width="450px"
+                      height="300px"
+                    />
+                    <Button onClick={() => handleReplaceVedio(index)}>
+                      Replace Vedio
+                    </Button>
+                    <Button className="bg-red-900">Delete Lecture</Button>
+                  </div>
+                ) : (
+                  <Input
+                    type="file"
+                    accept="video/*"
+                    onChange={(event) =>
+                      handleSingleLectureUpload(event, index)
+                    }
+                    className="mb-4"
+                  />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
     </Card>
   );
 }
