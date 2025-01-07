@@ -29,33 +29,33 @@ function App() {
         path="/instructor"
         element={
           <RouteGaurd
-          authenticated={auth?.authenticate}
-          user={auth?.user}
-          element={<InstructorDashBoardPage />}
+            authenticated={auth?.authenticate}
+            user={auth?.user}
+            element={<InstructorDashBoardPage />}
           />
-        } 
+        }
       />
-       <Route
+      <Route
         path="/instructor/create-new-course"
         element={
           <RouteGaurd
-          authenticated={auth?.authenticate}
-          user={auth?.user}
-          element={<AddNewCourse />}
+            authenticated={auth?.authenticate}
+            user={auth?.user}
+            element={<AddNewCourse />}
           />
-        } 
+        }
       />
       <Route
         path="/instructor/edit-course/:courseId"
         element={
           <RouteGaurd
-          authenticated={auth?.authenticate}
-          user={auth?.user}
-          element={<AddNewCourse />}
+            authenticated={auth?.authenticate}
+            user={auth?.user}
+            element={<AddNewCourse />}
           />
-        } 
+        }
       />
-    <Route
+      <Route
         path="/"
         element={
           <RouteGaurd
@@ -68,7 +68,7 @@ function App() {
         <Route path="" element={<StudentHomePage />} />
         <Route path="home" element={<StudentHomePage />} />
       </Route>
-      <Route path="*" element={<Not_Found/>}/>
+      <Route path="*" element={<Not_Found />} />
     </Routes>
   );
 }
