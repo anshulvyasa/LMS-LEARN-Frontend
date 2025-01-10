@@ -78,8 +78,8 @@ export async function updateCourseByIdService(id, formData) {
   return data;
 }
 
-export async function fetchStudentViewCourseListService() {
-  const { data } = await axiosInstance.get(`/student/course/get`);
+export async function fetchStudentViewCourseListService(query) {
+  const { data } = await axiosInstance.get(`/student/course/get?${query}`);
 
   return data;
 }

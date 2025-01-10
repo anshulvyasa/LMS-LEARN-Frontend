@@ -1,10 +1,12 @@
 import { GraduationCap, TvMinimalPlay } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useContext } from "react";
 import { AuthContext } from "@/context/auth-context/Index";
 
 const StudentViewCommonHeader = () => {
+  const navigate = useNavigate();
+
   const { resetCredential } = useContext(AuthContext);
   function handleSignOut() {
     sessionStorage.clear();
@@ -21,7 +23,13 @@ const StudentViewCommonHeader = () => {
           </span>
         </Link>
         <div className="flex items-center space-x-1">
-          <Button variant="ghost" className="text-[14px] md:text-[16px]">
+          <Button
+            variant="ghost"
+            className="text-[14px] md:text-[16px]"
+            onClick={() => {
+              navigate("/courses");
+            }}
+          >
             Explore Courses
           </Button>
         </div>
