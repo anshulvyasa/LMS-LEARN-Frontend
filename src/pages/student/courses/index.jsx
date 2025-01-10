@@ -9,6 +9,7 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { filterOptions, sortOptions } from "@/config";
 import { StudentContext } from "@/context/student-context";
 import { fetchStudentViewCourseListService } from "@/services";
@@ -20,8 +21,12 @@ export const StudentViewCoursesPage = () => {
   const [sort, setSort] = useState("price-lowtohigh");
   const [filter, setFilter] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-  const { studentViewCoursesList, setStudentViewCoursesList } =
-    useContext(StudentContext);
+  const {
+    studentViewCoursesList,
+    setStudentViewCoursesList,
+    studentLoading,
+    setStudentLoading,
+  } = useContext(StudentContext);
 
   function handleCheckChange(getSectionId, getCurrentOption) {
     let cpyFilter = { ...filter };
@@ -52,11 +57,13 @@ export const StudentViewCoursesPage = () => {
       sortby: sort,
     });
 
+    setStudentLoading(true);
     const response = await fetchStudentViewCourseListService(query);
 
     if (response?.success) {
       setStudentViewCoursesList(response.data);
     }
+    setStudentLoading(false);
   }
 
   function createSearchParamsHelper(filterParams) {
@@ -82,7 +89,12 @@ export const StudentViewCoursesPage = () => {
     if (filter != null && sort != null) getStudentViewCourseList(filter, sort);
   }, [filter, sort]);
 
-  console.log(filter);
+  useEffect(() => {
+    setSort("price-lowtohigh");
+    setFilter(JSON.parse(sessionStorage.getItem("filters")) || {});
+
+    return () => sessionStorage.removeItem("filters");
+  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -180,6 +192,8 @@ export const StudentViewCoursesPage = () => {
                   </CardContent>
                 </Card>
               ))
+            ) : studentLoading ? (
+              <Skeleton />
             ) : (
               <h1>No Courses Found</h1>
             )}
