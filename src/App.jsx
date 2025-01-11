@@ -9,6 +9,7 @@ import StudentHomePage from "./pages/student/home";
 import Not_Found from "./pages/not-found";
 import AddNewCourse from "./pages/instructor/add_new_course";
 import StudentViewCoursesPage from "./pages/student/courses";
+import StudentViewCourseDetailPage from "./pages/student/course-details";
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -69,6 +70,7 @@ function App() {
         <Route path="" element={<StudentHomePage />} />
         <Route path="home" element={<StudentHomePage />} />
         <Route path="courses" element={<StudentViewCoursesPage />} />
+        <Route path="courses/details/:id" element={<StudentViewCourseDetailPage/>}/>
       </Route>
       <Route path="*" element={<Not_Found />} />
     </Routes>
