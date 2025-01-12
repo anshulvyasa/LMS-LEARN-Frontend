@@ -91,3 +91,16 @@ export async function fetchStudentViewCourseDetailService(courseId) {
 
   return data;
 }
+
+
+export async function createPaymentService(formData) {
+  const { data } = await axiosInstance.post("/student/order/create", formData);
+  return data;
+}
+
+
+export async function captureAndFinalizePaymentService(formData) {
+  const { data } = await axiosInstance.post("/student/order/finalize", formData);
+  return data;
+}
+

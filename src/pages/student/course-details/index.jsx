@@ -10,8 +10,12 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import VedioPlayer from "@/components/vedio-player";
+import { AuthContext } from "@/context/auth-context/Index";
 import { StudentContext } from "@/context/student-context";
-import { fetchStudentViewCourseDetailService } from "@/services";
+import {
+  createPaymentService,
+  fetchStudentViewCourseDetailService,
+} from "@/services";
 import { CheckCheck, Globe, Lock, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -25,9 +29,13 @@ const StudentViewCourseDetailPage = () => {
     studentLoading,
     setStudentLoading,
   } = useContext(StudentContext);
+  const { auth } = useContext(AuthContext);
+
+  //States Are Defined Here
   const [displayCurrentVideoFreePreview, setDisplayCurrentVideoFreePreview] =
     useState(null);
   const [showFreePreviewDialog, setShowFreePreviewDialog] = useState(false);
+  const [approveUrl, setApproveUrl] = useState("");
 
   const { id } = useParams();
 
@@ -46,6 +54,35 @@ const StudentViewCourseDetailPage = () => {
   function handleSetFreePreview(getCurrentVedioInfo) {
     setDisplayCurrentVideoFreePreview(getCurrentVedioInfo.vedioUrl);
     setShowFreePreviewDialog(true);
+  }
+
+  async function handleCreatePayment() {
+    const paymentPayload = {
+      userId: auth?.user._id,
+      userName: auth?.user.userName,
+      userEmail: auth?.user.userEmail,
+      orderStatus: "pending",
+      paymentMethod: "paypal",
+      paymentStatus: "initiated",
+      orderDate: new Date(),
+      paymentId: "",
+      payerId: "",
+      instrutorId: studentViewCourseDetail?.instructorId,
+      instructorName: studentViewCourseDetail?.instructorName,
+      courseImage: studentViewCourseDetail?.image,
+      courseTitle: studentViewCourseDetail?.title,
+      courseId: studentViewCourseDetail?._id,
+      coursePricing: studentViewCourseDetail?.pricing,
+    };
+
+    const response = await createPaymentService(paymentPayload);
+    if (response?.success) {
+      sessionStorage.setItem(
+        "currentOrderId",
+        JSON.stringify(response?.data?.orderId)
+      );
+      setApproveUrl(response?.data?.approveUrl);
+    }
   }
 
   useEffect(() => {
@@ -69,6 +106,8 @@ const StudentViewCourseDetailPage = () => {
       : -1;
 
   if (studentLoading) return <Skeleton />;
+  if(approveUrl!=='')
+    window.location.href=approveUrl
 
   return (
     <div className=" mx-auto p-4">
@@ -159,7 +198,9 @@ const StudentViewCourseDetailPage = () => {
                   ${studentViewCourseDetail?.pricing}
                 </span>
               </div>
-              <Button className="w-full">But Now</Button>
+              <Button className="w-full" onClick={handleCreatePayment}>
+                Buy Now
+              </Button>
             </CardContent>
           </Card>
         </aside>
@@ -186,7 +227,7 @@ const StudentViewCourseDetailPage = () => {
                   onClick={() => handleSetFreePreview(curriculumItem)}
                   className="cursor-pointer list-none flex gap-2 items-center mb-2"
                 >
-                  <PlayCircle className="w-4 h-4 text-green-600 "/>
+                  <PlayCircle className="w-4 h-4 text-green-600 " />
                   {curriculumItem?.title}
                 </li>
               ))}
