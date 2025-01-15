@@ -27,7 +27,9 @@ const StudentViewCommonHeader = () => {
             variant="ghost"
             className="text-[14px] md:text-[16px]"
             onClick={() => {
-              navigate("/courses");
+              location.pathname.includes("/courses")
+                ? null
+                : navigate("/courses");
             }}
           >
             Explore Courses
