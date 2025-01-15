@@ -35,8 +35,11 @@ const StudentViewCommonHeader = () => {
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <div className="flex space-x-2">
-          <span className="font-bold md:text-xl text-[14xl]">My Courses</span>
+        <div
+          onClick={() => navigate("/student-courses")}
+          className="flex cursor-pointer space-x-2"
+        >
+          <span className="font-bold  md:text-xl text-[14xl]">My Courses</span>
           <TvMinimalPlay className="h-8 w-8 mr-3" />
         </div>
         <Button onClick={handleSignOut}>Sign out</Button>

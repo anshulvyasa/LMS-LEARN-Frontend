@@ -11,29 +11,37 @@ import {
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { filterOptions, sortOptions } from "@/config";
+import { AuthContext } from "@/context/auth-context/Index";
 import { StudentContext } from "@/context/student-context";
-import { fetchStudentViewCourseListService } from "@/services";
+import {
+  fetchStudentBoughtCoursesStatus,
+  fetchStudentViewCourseListService,
+} from "@/services";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 export const StudentViewCoursesPage = () => {
   const [sort, setSort] = useState("price-lowtohigh");
   const [filter, setFilter] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const {
     studentViewCoursesList,
     setStudentViewCoursesList,
     studentLoading,
     setStudentLoading,
   } = useContext(StudentContext);
+  const { auth } = useContext(AuthContext);
 
   function handleCheckChange(getSectionId, getCurrentOption) {
     let cpyFilter = { ...filter };
     const indexOfCurrentSection = Object.keys(cpyFilter).indexOf(getSectionId);
 
-    console.log(indexOfCurrentSection);
     if (indexOfCurrentSection === -1) {
       cpyFilter = {
         ...cpyFilter,
@@ -79,6 +87,21 @@ export const StudentViewCoursesPage = () => {
     }
 
     return queryParams.join("&");
+  }
+
+  async function handleCourseClick(courseId) {
+    const response = await fetchStudentBoughtCoursesStatus(
+      courseId,
+      auth?.user._id
+    );
+
+    console.log("Message from fetchCurseStatus  ", response);
+
+    if (response?.status) {
+      navigate(`/course-progress/${courseId}`);
+    } else {
+      navigate(`/courses/details/${courseId}`);
+    }
   }
 
   useEffect(() => {
@@ -154,12 +177,18 @@ export const StudentViewCoursesPage = () => {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <span className="text-sm text-gray-900 font-bold">{studentViewCoursesList.length} results</span>
+            <span className="text-sm text-gray-900 font-bold">
+              {studentViewCoursesList.length} results
+            </span>
           </div>
           <div className="space-y-4">
             {studentViewCoursesList && studentViewCoursesList.length > 0 ? (
               studentViewCoursesList.map((courseItem) => (
-                <Card onClick={()=>navigate(`/courses/details/${courseItem._id}`)} className="cursor-pointer" key={courseItem?._id}>
+                <Card
+                  onClick={() => handleCourseClick(courseItem?._id)}
+                  className="cursor-pointer"
+                  key={courseItem?._id}
+                >
                   <CardContent className="flex p-4 gap-4">
                     <div className="w-48 h-32 flex-shrink-0 rounded-md overflow-hidden">
                       <img

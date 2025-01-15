@@ -14,11 +14,12 @@ import { AuthContext } from "@/context/auth-context/Index";
 import { StudentContext } from "@/context/student-context";
 import {
   createPaymentService,
+  fetchStudentBoughtCoursesStatus,
   fetchStudentViewCourseDetailService,
 } from "@/services";
 import { CheckCheck, Globe, Lock, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const StudentViewCourseDetailPage = () => {
   const {
@@ -38,6 +39,7 @@ const StudentViewCourseDetailPage = () => {
   const [approveUrl, setApproveUrl] = useState("");
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   async function fetchStudentViewCourseDetails() {
     setStudentLoading(true);
@@ -94,8 +96,17 @@ const StudentViewCourseDetailPage = () => {
     };
   }, [currentCourseDetailId]);
 
-  useEffect(() => {
+  async function checkIfCourseIsAlreadyBought() {
     if (id) setCurrentCourseDetailId(id);
+
+    const response = await fetchStudentBoughtCoursesStatus(id, auth?.user._id);
+    if (response?.status) {
+      navigate(`/course-progress/${id}`);
+    }
+  }
+
+  useEffect(() => {
+    checkIfCourseIsAlreadyBought();
   }, [id]);
 
   const getIndexOfFreePreviewURL =
@@ -106,8 +117,7 @@ const StudentViewCourseDetailPage = () => {
       : -1;
 
   if (studentLoading) return <Skeleton />;
-  if(approveUrl!=='')
-    window.location.href=approveUrl
+  if (approveUrl !== "") window.location.href = approveUrl;
 
   return (
     <div className=" mx-auto p-4">

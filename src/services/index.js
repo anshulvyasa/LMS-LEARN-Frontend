@@ -104,3 +104,27 @@ export async function captureAndFinalizePaymentService(formData) {
   return data;
 }
 
+
+
+// export async function fetchStudentBoughtCourseService(studentId) {
+//   const { data } = await axiosInstance.get(`/student/courses-bought/get/${studentId}`);
+
+//   return data;
+// }
+
+export async function fetchStudentBoughtCoursesService(studentId) {
+  const { data } = await axiosInstance.get(
+    `/student/courses-bought/get/${studentId}`
+  );
+
+  return data;
+}
+
+
+export async function fetchStudentBoughtCoursesStatus(courseId,studentId) {
+  const { data } = await axiosInstance.get(
+    `/student/courses-bought/course/${courseId}/${studentId}`
+  );
+
+  return data;
+}
