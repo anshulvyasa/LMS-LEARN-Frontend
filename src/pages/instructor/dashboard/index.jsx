@@ -29,13 +29,17 @@ function InstructorDashBoardPage() {
       icon: BarChart,
       label: "Dashboard",
       value: "dashboard",
-      component: <InstructorDashboard />,
+      component: (
+        <InstructorDashboard listOfCourses={instructorCourseInitialList} />
+      ),
     },
     {
       icon: Book,
       label: "Courses",
       value: "courses",
-      component: <InstructorCourses  listOfCourses={instructorCourseInitialList}/>,
+      component: (
+        <InstructorCourses listOfCourses={instructorCourseInitialList} />
+      ),
     },
     {
       icon: LogOut,

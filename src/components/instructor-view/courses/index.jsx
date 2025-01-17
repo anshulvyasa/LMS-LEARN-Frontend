@@ -55,7 +55,7 @@ function InstructorCourses({ listOfCourses }) {
                     <TableRow>
                       <TableCell>{course?.title}</TableCell>
                       <TableCell>{course?.Student.length}</TableCell>
-                      <TableCell>${course?.pricing}</TableCell>
+                      <TableCell>${course?.Student.length*course?.pricing}</TableCell>
                       <TableCell>
                         <Button
                           onClick={() => {
