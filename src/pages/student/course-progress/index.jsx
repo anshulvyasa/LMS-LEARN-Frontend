@@ -116,7 +116,7 @@ const StudentViewProgressPage = () => {
   useEffect(() => {
     const timeOut = setTimeout(() => {
       setShowConfetti(false);
-    }, 5000);
+    }, 15000);
 
     return () => {
       clearTimeout(timeOut);
@@ -124,10 +124,6 @@ const StudentViewProgressPage = () => {
   }, [showConfetti]);
 
   console.log("Current Lecture : ", currentLecture);
-  // console.log(
-  //   "Student Current Course Progress : ",
-  //   studentCurrentCourseProgress
-  // );
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[#1c1d1f]  text-white">
@@ -246,10 +242,10 @@ const StudentViewProgressPage = () => {
         </DialogContent>
       </Dialog>
       <Dialog open={showCourseCompleteDialog}>
-        <DialogContent className="w-[425px]">
+        <DialogContent showOverlay={false} className="w-[425px]">
           <DialogHeader>
             <DialogTitle>Congrats you have completed the Course</DialogTitle>
-            <DialogDescription className="flex flex-col gap-3">
+            <DialogDescription  className="flex flex-col gap-3">
               <Label>You Have Completed The Course</Label>
               <div className="flex flex-row gap-3">
                 <Button onClick={() => navigate("/student-courses")}>
