@@ -95,8 +95,6 @@ export const StudentViewCoursesPage = () => {
       auth?.user._id
     );
 
-    console.log("Message from fetchCurseStatus  ", response);
-
     if (response?.status) {
       navigate(`/course-progress/${courseId}`);
     } else {

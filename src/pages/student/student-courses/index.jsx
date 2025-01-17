@@ -5,11 +5,13 @@ import { StudentContext } from "@/context/student-context";
 import { fetchStudentBoughtCoursesService } from "@/services";
 import { Watch } from "lucide-react";
 import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const StudentCoursesPage = () => {
   const { studentBoughtList, setStudentBoughtList } =
     useContext(StudentContext);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   async function handleCourseBoughtFetch() {
     const response = await fetchStudentBoughtCoursesService(auth?.user._id);
@@ -26,7 +28,11 @@ const StudentCoursesPage = () => {
       <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 pt-4">
         {studentBoughtList && studentBoughtList.length > 0 ? (
           studentBoughtList.map((course) => (
-            <Card key={course.courseId} className="flex flex-col">
+            <Card
+              onClick={() => navigate(`/course-progress/${course.courseId}`)}
+              key={course.courseId}
+              className="flex flex-col"
+            >
               <CardContent className="p-4 flex-grow">
                 <img
                   src={course.courseImage}

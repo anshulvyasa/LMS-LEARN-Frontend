@@ -13,7 +13,13 @@ import {
   VolumeX,
 } from "lucide-react";
 
-function VedioPlayer({ height = "100%", width = "100%", url }) {
+function VedioPlayer({
+  height = "100%",
+  width = "100%",
+  url,
+  onProgressUpdate,
+  progresData,
+}) {
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -104,6 +110,15 @@ function VedioPlayer({ height = "100%", width = "100%", url }) {
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (played === 1) {
+      onProgressUpdate({
+        ...progresData,
+        progressValue: played,
+      });
+    }
+  }, [played]);
 
   return (
     <div
